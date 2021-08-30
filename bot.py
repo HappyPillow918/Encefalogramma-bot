@@ -229,34 +229,50 @@ def get_input(update: Update, context: CallbackContext) -> None:
 def new_intern(update: Update, context: CallbackContext) -> None:
     if utils.check_admin(update.message.from_user.id, config.INTERNSHIP_GROUP_ID, context.bot) \
             and update.message.chat.id == config.INTERNSHIP_GROUP_ID:
+        # New backup file.
+        shutil.copyfile(config.DATABASE_PATH, config.BACKUP_PATH.format(datetime.now().strftime("%d%B%Y")))
         interns.truncate()
         if context.args:
             update.message.reply_text(text=config.INTERNSHIP_STRINGS['new'].format(period=context.args[0]),
                                       quote=False, parse_mode='Markdown')
-        update.message.reply_text(text=utils.create_list(interns.all(), config.INTERNSHIP_STRINGS['list']),
-                                  quote=False, parse_mode='Markdown')
+        msg = update.message.reply_text(text=utils.create_list(interns.all(), config.INTERNSHIP_STRINGS['list']),
+                                        quote=False, parse_mode='Markdown')
+        if db.all():
+            old_msg = db.all()[0]
+            context.bot.deleteMessage(chat_id=config.INTERNSHIP_GROUP_ID, message_id=old_msg['id'])
+            db.update({'id': msg.message_id}, Query().id.exists())
+        else:
+            db.insert({'id': msg.message_id})
 
 
 # /add [crt+time] command adds a new user-associated entry to the list.
 def add_intern(update: Update, context: CallbackContext) -> None:
-    if update.message.chat.id == config.INTERNSHIP_GROUP_ID:
-        if context.args:
-            entry = utils.check_format(context.args[0], 'add_intern')
-            user_id = str(update.message.from_user.id)
-            intern = Query()
-            if entry and not interns.contains(intern.id == user_id):
-                user_text = f"{update.message.from_user.first_name} (@{update.message.from_user.username}) - " \
-                            f"{entry['crt']} crediti in {entry['type']} time"
-                interns.insert({'id': user_id, 'text': user_text})
+    if update.message.chat.id != config.INTERNSHIP_GROUP_ID:
+        return
+    if context.args:
+        entry = utils.check_format(context.args[0], 'add_intern')
+        user_id = str(update.message.from_user.id)
+        intern = Query()
+        if entry and not interns.contains(intern.id == user_id):
+            user_text = f"{update.message.from_user.first_name} (@{update.message.from_user.username}) - " \
+                        f"{entry['crt']} crediti in {entry['type']} time"
+            interns.insert({'id': user_id, 'text': user_text})
 
-                update.message.reply_text(text=config.INTERNSHIP_STRINGS['add']
-                                          .format(name=update.message.from_user.first_name),
-                                          quote=False, parse_mode='Markdown')
-                update.message.reply_text(text=utils.create_list(interns.all(), config.INTERNSHIP_STRINGS['list']),
-                                          quote=False, parse_mode='Markdown')
-        else:
-            update.message.reply_text(text=config.INTERNSHIP_STRINGS['error'],
-                                      parse_mode='Markdown')
+            update.message.reply_text(text=config.INTERNSHIP_STRINGS['add']
+                                      .format(name=update.message.from_user.first_name),
+                                      quote=False, parse_mode='Markdown')
+            msg = update.message.reply_text(text=utils.create_list(interns.all(),
+                                                                   config.INTERNSHIP_STRINGS['list']),
+                                            quote=False, parse_mode='Markdown')
+            if db.all():
+                old_msg = db.all()[0]
+                context.bot.deleteMessage(chat_id=config.INTERNSHIP_GROUP_ID, message_id=old_msg['id'])
+                db.update({'id': msg.message_id}, Query().id.exists())
+            else:
+                db.insert({'id': msg.message_id})
+    else:
+        update.message.reply_text(text=config.INTERNSHIP_STRINGS['error'],
+                                  parse_mode='Markdown')
 
 
 # /remove command deletes the user-associated entry from the list.
@@ -269,14 +285,27 @@ def remove_intern(update: Update, context: CallbackContext) -> None:
             update.message.reply_text(text=config.INTERNSHIP_STRINGS['remove']
                                       .format(name=update.message.from_user.first_name),
                                       quote=False, parse_mode='Markdown')
-            update.message.reply_text(text=utils.create_list(interns.all(), config.INTERNSHIP_STRINGS['list']),
-                                      quote=False, parse_mode="Markdown")
+            msg = update.message.reply_text(text=utils.create_list(interns.all(),
+                                                                   config.INTERNSHIP_STRINGS['list']),
+                                            quote=False, parse_mode="Markdown")
+            if db.all():
+                old_msg = db.all()[0]
+                context.bot.deleteMessage(chat_id=config.INTERNSHIP_GROUP_ID, message_id=old_msg['id'])
+                db.update({'id': msg.message_id}, Query().id.exists())
+            else:
+                db.insert({'id': msg.message_id})
 
 
 # /show command sends the current list in chat.
 def show_intern(update: Update, context: CallbackContext) -> None:
-    update.message.reply_text(text=utils.create_list(interns.all(), config.INTERNSHIP_STRINGS['list']),
-                              quote=False, parse_mode='Markdown')
+    msg = update.message.reply_text(text=utils.create_list(interns.all(), config.INTERNSHIP_STRINGS['list']),
+                                    quote=False, parse_mode='Markdown')
+    if db.all():
+        old_msg = db.all()[0]
+        context.bot.deleteMessage(chat_id=config.INTERNSHIP_GROUP_ID, message_id=old_msg['id'])
+        db.update({'id': msg.message_id}, Query().id.exists())
+    else:
+        db.insert({'id': msg.message_id})
 
 
 # ------
@@ -299,7 +328,7 @@ def inlinequery(update: Update, context: CallbackContext) -> None:
                 disable_web_page_preview=True,
             ),
             url=group['url'],
-            thumb_url="https://raw.githubusercontent.com/HappyPillow918/encefalogramma-bot/main/img/brain128px.png",
+            thumb_url="https://raw.githubusercontent.com/HappyPillow918/encefalogramma-bot/main/brain128px.png",
         )
         for group in groups_list
     ]
