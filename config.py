@@ -268,12 +268,12 @@ _Una nuova lista è stata creata per il tirocinio {period}._
     "add": """
 👩‍🚀 *Coppie Tirocinio*
 
-_{name} sta cercando un compagno ed è stato aggiunto alla lista!_
+{name} _sta cercando un compagno ed è stato aggiunto alla lista!_
     """,
     "remove": """
 👩‍🚀 *Coppie Tirocinio*
 
-_{name} ha trovato un compagno ed è stato rimosso dalla lista!_
+{name} _ha trovato un compagno ed è stato rimosso dalla lista!_
     """,
     "error": """
 👩‍🚀 *Coppie Tirocinio*

@@ -237,12 +237,7 @@ def new_intern(update: Update, context: CallbackContext) -> None:
                                       quote=False, parse_mode='Markdown')
         msg = update.message.reply_text(text=utils.create_list(interns.all(), config.INTERNSHIP_STRINGS['list']),
                                         quote=False, parse_mode='Markdown')
-        if db.all():
-            old_msg = db.all()[0]
-            context.bot.deleteMessage(chat_id=config.INTERNSHIP_GROUP_ID, message_id=old_msg['id'])
-            db.update({'id': msg.message_id}, Query().id.exists())
-        else:
-            db.insert({'id': msg.message_id})
+        utils.delete_old_list(msg, context.bot)
 
 
 # /add [crt+time] command adds a new user-associated entry to the list.
@@ -254,22 +249,17 @@ def add_intern(update: Update, context: CallbackContext) -> None:
         user_id = str(update.message.from_user.id)
         intern = Query()
         if entry and not interns.contains(intern.id == user_id):
-            user_text = f"{update.message.from_user.first_name} (@{update.message.from_user.username}) - " \
+            user_text = f"{utils.escape_chars(update.message.from_user.first_name)} " \
+                        f"(@{utils.escape_chars(update.message.from_user.username)}) - " \
                         f"{entry['crt']} crediti in {entry['type']} time"
             interns.insert({'id': user_id, 'text': user_text})
-
             update.message.reply_text(text=config.INTERNSHIP_STRINGS['add']
-                                      .format(name=update.message.from_user.first_name),
+                                      .format(name=utils.escape_chars(update.message.from_user.first_name)),
                                       quote=False, parse_mode='Markdown')
             msg = update.message.reply_text(text=utils.create_list(interns.all(),
                                                                    config.INTERNSHIP_STRINGS['list']),
                                             quote=False, parse_mode='Markdown')
-            if db.all():
-                old_msg = db.all()[0]
-                context.bot.deleteMessage(chat_id=config.INTERNSHIP_GROUP_ID, message_id=old_msg['id'])
-                db.update({'id': msg.message_id}, Query().id.exists())
-            else:
-                db.insert({'id': msg.message_id})
+            utils.delete_old_list(msg, context.bot)
     else:
         update.message.reply_text(text=config.INTERNSHIP_STRINGS['error'],
                                   parse_mode='Markdown')
@@ -283,29 +273,19 @@ def remove_intern(update: Update, context: CallbackContext) -> None:
         if interns.contains(intern.id == user_id):
             interns.remove(intern.id == user_id)
             update.message.reply_text(text=config.INTERNSHIP_STRINGS['remove']
-                                      .format(name=update.message.from_user.first_name),
+                                      .format(name=utils.escape_chars(update.message.from_user.first_name)),
                                       quote=False, parse_mode='Markdown')
             msg = update.message.reply_text(text=utils.create_list(interns.all(),
                                                                    config.INTERNSHIP_STRINGS['list']),
-                                            quote=False, parse_mode="Markdown")
-            if db.all():
-                old_msg = db.all()[0]
-                context.bot.deleteMessage(chat_id=config.INTERNSHIP_GROUP_ID, message_id=old_msg['id'])
-                db.update({'id': msg.message_id}, Query().id.exists())
-            else:
-                db.insert({'id': msg.message_id})
+                                            quote=False, parse_mode='Markdown')
+            utils.delete_old_list(msg, context.bot)
 
 
 # /show command sends the current list in chat.
 def show_intern(update: Update, context: CallbackContext) -> None:
     msg = update.message.reply_text(text=utils.create_list(interns.all(), config.INTERNSHIP_STRINGS['list']),
                                     quote=False, parse_mode='Markdown')
-    if db.all():
-        old_msg = db.all()[0]
-        context.bot.deleteMessage(chat_id=config.INTERNSHIP_GROUP_ID, message_id=old_msg['id'])
-        db.update({'id': msg.message_id}, Query().id.exists())
-    else:
-        db.insert({'id': msg.message_id})
+    utils.delete_old_list(msg, context.bot)
 
 
 # ------

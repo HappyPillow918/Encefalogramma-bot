@@ -4,15 +4,19 @@ Author: HappyPillow918
 Recurrent functions used in bot.py.
 """
 from yaml import safe_load
+from tinydb import TinyDB, Query
+from config import DATABASE_PATH, INTERNSHIP_GROUP_ID
+db = TinyDB(DATABASE_PATH)
 
 
 # Create a list given a dictionary [data] and a string [header].
 def create_list(data, header) -> str:
+    markdown = '' if 'Tirocinio' in header else '`'
     if data:
         for elem in data:
-            header += '\n> `' + elem['text'] + '`'
+            header += '\n> ' + markdown + elem['text'] + markdown
     else:
-        header += '\n`Nessuno`'
+        header += '\n Nessuno'
     return header
 
 
@@ -44,5 +48,23 @@ def check_format(message, case) -> dict:
 
 
 # Returns True if the user [user_id] is an admin in a particolar group [chat id].
-def check_admin(user_id, chat_id, bot):
+def check_admin(user_id, chat_id, bot) -> bool:
     return bool(user_id in [admin.user.id for admin in bot.get_chat_administrators(chat_id)])
+
+
+# Delete previous interns' list
+def delete_old_list(msg, bot) -> None:
+    if db.all():
+        old_msg = db.all()[0]
+        bot.deleteMessage(chat_id=INTERNSHIP_GROUP_ID, message_id=old_msg['id'])
+        db.update({'id': msg.message_id}, Query().id.exists())
+    else:
+        db.insert({'id': msg.message_id})
+
+
+# Escape reserved chars in Markdown
+def escape_chars(text) -> str:
+    chars = '_*`[]'
+    for c in chars:
+        text = text.replace(c, '\\' + c)
+    return text
