@@ -64,7 +64,8 @@ def delete_old_list(msg, bot) -> None:
 
 # Escape reserved chars in Markdown
 def escape_chars(text) -> str:
-    chars = '_*`[]'
-    for c in chars:
-        text = text.replace(c, '\\' + c)
+    if text:
+        chars = '_*`[]'
+        for c in chars:
+            text = text.replace(c, '\\' + c)
     return text

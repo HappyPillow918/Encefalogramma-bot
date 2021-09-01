@@ -322,7 +322,7 @@ def inlinequery(update: Update, context: CallbackContext) -> None:
 
 
 # Create basic logs. New log file each month.
-logging.basicConfig(filename=config.LOGS_PATH.format(datetime.now().strftime("%B%Y")), level=logging.INFO,
+logging.basicConfig(filename=config.LOGS_PATH.format(datetime.now().strftime("%Y")), level=logging.INFO,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
