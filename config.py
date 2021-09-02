@@ -91,11 +91,11 @@ lo visualizzerà il prima possibile e aggiungerà il gruppo al bot.
     
 Nel gruppo telegram del tirocinio il bot crea autonomamente una lista di coloro che stanno cercando un compagno \
 per frequentare il tirocinio ed è possibile utilizzare i seguenti comandi per interagire con essa:
-/add |crt+time| - per essere aggiunti alla lista.
-/remove - per essere cancellati dalla lista.
-/show - per mostrare la lista.
+`/add |crt+time|` - per essere aggiunti alla lista.
+`/remove` - per essere cancellati dalla lista.
+`/show` - per mostrare la lista.
     
-_Due esempi di formato atteso dopo il comando /add:_
+_Due esempi di formato atteso dopo il comando_ `/add:`
 1. *145F* sta per 145 crediti in Full Time.
 2. *132P* sta per 132 crediti in Part Time.
     
@@ -228,7 +228,7 @@ LOGS_STRINGS = {
 -- _Papyrus_
 
 🆕 {name} ha aggiunto questo suggerimento:
-{text}
+`{text}`
     """,
     "clear": """
 🧠 *Encefalogramma*
@@ -254,9 +254,9 @@ INTERNSHIP_STRINGS = {
     "list": """
 👩‍🚀 *Coppie Tirocinio*
 
-/add |crt+time| - per essere aggiunti alla lista.
-/remove - per essere cancellati dalla lista.
-/show - per mostrare la lista.
+`/add |crt+time|` - per essere aggiunti alla lista.
+`/remove` - per essere cancellati dalla lista.
+`/show` - per mostrare la lista.
 
 _In cerca di compagno:_
     """,
@@ -278,7 +278,7 @@ _Una nuova lista è stata creata per il tirocinio {period}._
     "error": """
 👩‍🚀 *Coppie Tirocinio*
 
-_Hai immesso un formato invalido. Ecco due esempi di formato atteso dopo il comando /add:_
+_Hai immesso un formato invalido. Ecco due esempi di formato atteso dopo il comando_ `/add:`
 1. *145F* sta per 145 crediti in Full Time
 2. *132P* sta per 132 crediti in Part Time
     """
