@@ -283,9 +283,10 @@ def remove_intern(update: Update, context: CallbackContext) -> None:
 
 # /show command sends the current list in chat.
 def show_intern(update: Update, context: CallbackContext) -> None:
-    msg = update.message.reply_text(text=utils.create_list(interns.all(), config.INTERNSHIP_STRINGS['list']),
-                                    quote=False, parse_mode='Markdown')
-    utils.delete_old_list(msg, context.bot)
+    if update.message.chat.id == config.INTERNSHIP_GROUP_ID:
+        msg = update.message.reply_text(text=utils.create_list(interns.all(), config.INTERNSHIP_STRINGS['list']),
+                                        quote=False, parse_mode='Markdown')
+        utils.delete_old_list(msg, context.bot)
 
 
 # ------

@@ -56,8 +56,11 @@ def check_admin(user_id, chat_id, bot) -> bool:
 def delete_old_list(msg, bot) -> None:
     if db.all():
         old_msg = db.all()[0]
-        bot.deleteMessage(chat_id=INTERNSHIP_GROUP_ID, message_id=old_msg['id'])
         db.update({'id': msg.message_id}, Query().id.exists())
+        try:
+            bot.deleteMessage(chat_id=INTERNSHIP_GROUP_ID, message_id=old_msg['id'])
+        except Exception:
+            return
     else:
         db.insert({'id': msg.message_id})
 
