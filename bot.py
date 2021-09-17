@@ -175,6 +175,7 @@ def admins_utils(update: Update, context: CallbackContext) -> int:
 def get_input(update: Update, context: CallbackContext) -> None:
     status = context.user_data['status']
     message = update.message.text
+    entry = ''
     error = False
     # New backup file each day (only if a database modification takes place).
     shutil.copyfile(config.DATABASE_PATH, config.BACKUP_PATH.format(datetime.now().strftime("%d%B%Y")))
@@ -218,6 +219,10 @@ def get_input(update: Update, context: CallbackContext) -> None:
         context.bot.send_message(text=config.LOGS_STRINGS[status]
                                  .format(name=update.message.from_user.id, text=message[:config.SUGGESTIONS_MAXCHAR]),
                                  chat_id=config.BOT_GROUP_ID, parse_mode='Markdown')
+        if status == 'add_group':
+            context.bot.send_message(text=config.LOGS_STRINGS['notice']
+                                     .format(text=entry['text'], url=entry['url']),
+                                     chat_id=config.GENERAL_GROUP_ID, parse_mode='Markdown')
 
 
 # ------

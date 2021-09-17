@@ -14,9 +14,11 @@ DATABASE_PATH = 'data/database.json'
 BACKUP_PATH = 'data/backups/database-{}.json'
 LOGS_PATH = 'data/logs/debug-{}.log'
 # Internship group id (only group where /new, /add, /remove commands can be run)
-INTERNSHIP_GROUP_ID = 'ID'
+INTERNSHIP_GROUP_ID = -1234
 # Bot group id (which users are recognized as bot admins)
-BOT_GROUP_ID = 'ID'
+BOT_GROUP_ID = -1234
+# General group id
+GENERAL_GROUP_ID = -1234
 # Link to the form
 FORM_LINK = 'LINK'
 
@@ -248,6 +250,12 @@ LOGS_STRINGS = {
 
 🔠 {name} ha rimosso il gruppo {text}!
     """,
+    "notice": """
+🧠 *Encefalogramma*
+-- _Avviso_
+
+📢 Il gruppo [{text}]({url}) è stato aggiunto al bot!
+    """
 }
 # Text displayed by running internship commands
 INTERNSHIP_STRINGS = {
