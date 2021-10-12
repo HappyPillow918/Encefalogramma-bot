@@ -5,7 +5,6 @@ This is the brain's thalamus where information from sensory system are sorted an
 """
 import config
 import utils
-import shutil
 import logging
 from telegram import (
     Update,
@@ -28,7 +27,6 @@ from telegram.ext import (
 from uuid import uuid4
 from re import IGNORECASE
 from tinydb import TinyDB, Query
-from datetime import datetime
 
 # Define database and its subclasses.
 db = TinyDB(config.DATABASE_PATH)
@@ -50,7 +48,7 @@ KEYBOARD = [
     [InlineKeyboardButton(text='Tirocinio', callback_data='internship')],
     [InlineKeyboardButton(text=': : : : : : Magistrale : : : : : :', callback_data='null')],
     [InlineKeyboardButton(text='Vari', callback_data='master')],
-    [InlineKeyboardButton(text='✏ Suggerisci gruppo', callback_data='suggest')],
+    [InlineKeyboardButton(text='✏ Suggerisci link', callback_data='suggest')],
     [
         InlineKeyboardButton(text='🔎 Info', callback_data='about'),
         InlineKeyboardButton(text='🛠️ Admin', callback_data='admin')
@@ -177,8 +175,8 @@ def get_input(update: Update, context: CallbackContext) -> None:
     message = update.message.text
     entry = ''
     error = False
-    # New backup file each day (only if a database modification takes place).
-    shutil.copyfile(config.DATABASE_PATH, config.BACKUP_PATH.format(datetime.now().strftime("%d%B%Y")))
+    # New backup file.
+    utils.backup(context.bot)
     if status == 'suggest':
         suggestion = Query()
         user_id = str(update.message.from_user.id)
@@ -213,9 +211,6 @@ def get_input(update: Update, context: CallbackContext) -> None:
     else:
         update.message.reply_text(text=config.INPUT_STRINGS[status],
                                   parse_mode='Markdown')
-        logger.info((config.LOGS_STRINGS[status]
-                    .format(name=update.message.from_user.id, text=message[:config.SUGGESTIONS_MAXCHAR]))
-                    .replace('\n', ' '))
         context.bot.send_message(text=config.LOGS_STRINGS[status]
                                  .format(name=update.message.from_user.id, text=message[:config.SUGGESTIONS_MAXCHAR]),
                                  chat_id=config.BOT_GROUP_ID, parse_mode='Markdown')
@@ -235,7 +230,7 @@ def new_intern(update: Update, context: CallbackContext) -> None:
     if utils.check_admin(update.message.from_user.id, config.INTERNSHIP_GROUP_ID, context.bot) \
             and update.message.chat.id == config.INTERNSHIP_GROUP_ID:
         # New backup file.
-        shutil.copyfile(config.DATABASE_PATH, config.BACKUP_PATH.format(datetime.now().strftime("%d%B%Y")))
+        utils.backup(context.bot)
         interns.truncate()
         if context.args:
             update.message.reply_text(text=config.INTERNSHIP_STRINGS['new'].format(period=context.args[0]),
@@ -328,7 +323,7 @@ def inlinequery(update: Update, context: CallbackContext) -> None:
 
 
 # Create basic logs. New log file each month.
-logging.basicConfig(filename=config.LOGS_PATH.format(datetime.now().strftime("%Y")), level=logging.INFO,
+logging.basicConfig(filename=config.LOGS_PATH, level=logging.INFO,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 

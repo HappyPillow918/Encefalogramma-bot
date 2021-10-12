@@ -11,8 +11,7 @@ All the information, not meant to be modified frequently, are stored in this "co
 TOKEN = 'TOKEN'
 # Json file path
 DATABASE_PATH = 'data/database.json'
-BACKUP_PATH = 'data/backups/database-{}.json'
-LOGS_PATH = 'data/logs/debug-{}.log'
+LOGS_PATH = 'data/logs/debug.log'
 # Internship group id (only group where /new, /add, /remove commands can be run)
 INTERNSHIP_GROUP_ID = -1234
 # Bot group id (which users are recognized as bot admins)
@@ -80,7 +79,7 @@ _Se riscontri comportamenti anomali, contatta ----- su Telegram._
     """,
     "suggest": """
 🧠 *Encefalogramma*
--- _Suggerisci gruppo_
+-- _Suggerisci link_
 
 Invia un messaggio qui sotto con il link al gruppo e una breve descrizione dello stesso. Un amministratore \
 lo visualizzerà il prima possibile e aggiungerà il gruppo al bot.

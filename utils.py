@@ -5,7 +5,7 @@ Recurrent functions used in bot.py.
 """
 from yaml import safe_load
 from tinydb import TinyDB, Query
-from config import DATABASE_PATH, INTERNSHIP_GROUP_ID
+from config import DATABASE_PATH, INTERNSHIP_GROUP_ID, BOT_GROUP_ID
 db = TinyDB(DATABASE_PATH)
 
 
@@ -72,3 +72,9 @@ def escape_chars(text) -> str:
         for c in chars:
             text = text.replace(c, '\\' + c)
     return text
+
+
+# Backup file
+def backup(bot) -> None:
+    bot.sendDocument(chat_id=BOT_GROUP_ID, document=open(DATABASE_PATH, 'rb'))
+    return
