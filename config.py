@@ -43,26 +43,26 @@ di ingegneria biomedica.
 
 _Seleziona il percorso di tuo interesse:_
     """,
-    "generic": """
+    "B-generic": """
 🧠 *Encefalogramma*
 -- _Gruppi generici_
     
 Esistono tre gruppi generali: uno globale, due per fascia di cognome.
     """,
-    "first": """
+    "B-first": """
 🧠 *Encefalogramma*
 -- _Primo anno_
     
 Qui trovi elencati i gruppi dei corsi comuni del primo anno (gestiti dal corso di informatica) \
 e il gruppo della materia di indirizzo per il nostro corso.
     """,
-    "second": """
+    "B-second": """
 🧠 *Encefalogramma*
 -- _Secondo anno_
     
 Qui trovi elencati i gruppi del secondo anno per il nostro corso.
     """,
-    "third": """
+    "B-third": """
 🧠 *Encefalogramma*
 -- _Terzo anno_
     
@@ -92,9 +92,9 @@ lo visualizzerà il prima possibile e aggiungerà il gruppo al bot.
     
 Nel gruppo telegram del tirocinio il bot crea autonomamente una lista di coloro che stanno cercando un compagno \
 per frequentare il tirocinio ed è possibile utilizzare i seguenti comandi per interagire con essa:
-`/add |crt+time|` - per essere aggiunti alla lista.
-`/remove` - per essere cancellati dalla lista.
-`/show` - per mostrare la lista.
+-`/add |crt+time|` - per essere aggiunti alla lista.
+-`/remove` - per essere cancellati dalla lista.
+-`/show` - per mostrare la lista.
     
 _Due esempi di formato atteso dopo il comando_ `/add:`
 1. *145F* sta per 145 crediti in Full Time.
@@ -102,11 +102,23 @@ _Due esempi di formato atteso dopo il comando_ `/add:`
     
 Qui sotto trovi il gruppo relativo al tirocinio.
     """,
-    "master": """
+    "M-generic": """
 🧠 *Encefalogramma*
 -- _Magistrale_
 
-Qui trovi elencati i gruppi della magistrale di biomedica.
+Qui trovi elencati i gruppi generici della magistrale di biomedica.
+    """,
+    "M-first": """
+🧠 *Encefalogramma*
+-- _Magistrale_
+
+Qui trovi elencati i gruppi del primo anno della magistrale di biomedica.
+    """,
+    "M-second": """
+🧠 *Encefalogramma*
+-- _Magistrale_
+
+Qui trovi elencati i gruppi del secondo anno della magistrale di biomedica.
     """
 }
 # Text asked to confirm suggestions' deletion
@@ -146,8 +158,9 @@ semester:
 >> _Legenda:_
 # *text* - il nome del gruppo.
 # *url* - il link al gruppo.
-# *type* - il tipo di gruppo. Ammessi: _generic_ (generici), _first_ (primo anno), _second_ (secondo anno), \
-_third_ (terzo anno), _internship_ (tirocinio), _master_ (magistrale).
+# *type* - il tipo di gruppo. Ammessi per la *triennale*: _B-generic_ (generici), _B-first_ (primo anno), _B-second_ \
+(secondo anno), _B-third_ (terzo anno), _internship_ (tirocinio); per la *magistrale*: _M-generic_ (generici), \
+_M-first_ (primo anno), _M-second_ (secondo anno).
 # *semester* - il semestre in cui si colloca. Ammessi: _zero_ (sempre), \
 _one_ (primo semestre), _two_ (secondo semestre).
     """,

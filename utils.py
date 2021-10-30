@@ -37,7 +37,8 @@ def check_format(message, case) -> dict:
                 and temp.get('type', False)
                 and temp.get('semester', False)
                 and 'https://' in temp['url']
-                and temp['type'] in ['generic', 'first', 'second', 'third', 'internship', 'master']
+                and temp['type'] in ['B-generic', 'B-first', 'B-second', 'B-third', 'internship', 'M-generic',
+                                     'M-first', 'M-second']
                 and temp['semester'] in ['zero', 'one', 'two']
             ):
                 result = temp

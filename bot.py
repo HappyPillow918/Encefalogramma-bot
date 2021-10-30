@@ -37,17 +37,20 @@ suggestions = db.table('suggestions')
 MENU, INPUT, ADMIN = range(3)
 # Define main menu keyboard.
 KEYBOARD = [
-    [InlineKeyboardButton(text=': : : : : : Triennale : : : : : :', callback_data='null')],
-    [InlineKeyboardButton(text='Gruppi generici', callback_data='generic')],
-    [InlineKeyboardButton(text=': : : : : : Gruppi per anno : : : : : :', callback_data='null')],
+    [InlineKeyboardButton(text='--------      Triennale      --------', callback_data='null')],
+    [InlineKeyboardButton(text='Gruppi generici', callback_data='B-generic')],
     [
-        InlineKeyboardButton(text='1°', callback_data='first'),
-        InlineKeyboardButton(text='2°', callback_data='second'),
-        InlineKeyboardButton(text='3°', callback_data='third')
+        InlineKeyboardButton(text='1°', callback_data='B-first'),
+        InlineKeyboardButton(text='2°', callback_data='B-second'),
+        InlineKeyboardButton(text='3°', callback_data='B-third')
     ],
     [InlineKeyboardButton(text='Tirocinio', callback_data='internship')],
-    [InlineKeyboardButton(text=': : : : : : Magistrale : : : : : :', callback_data='null')],
-    [InlineKeyboardButton(text='Vari', callback_data='master')],
+    [InlineKeyboardButton(text='--------      Magistrale      --------', callback_data='null')],
+    [InlineKeyboardButton(text='Gruppi generici', callback_data='M-generic')],
+    [
+        InlineKeyboardButton(text='1°', callback_data='M-first'),
+        InlineKeyboardButton(text='2°', callback_data='M-second'),
+    ],
     [InlineKeyboardButton(text='✏ Suggerisci link', callback_data='suggest')],
     [
         InlineKeyboardButton(text='🔎 Info', callback_data='about'),
@@ -101,11 +104,11 @@ def groups_page(update: Update, context: CallbackContext) -> int:
         for group in uncategorized:
             keyboard.append([InlineKeyboardButton(text=group['text'], url=group['url'])])
     if first_semester:
-        keyboard.append([InlineKeyboardButton(text=': : : primo semestre : : :', callback_data='null')])
+        keyboard.append([InlineKeyboardButton(text='-----     primo semestre     -----', callback_data='null')])
         for group in first_semester:
             keyboard.append([InlineKeyboardButton(text=group['text'], url=group['url'])])
     if second_semester:
-        keyboard.append([InlineKeyboardButton(text=': : : secondo semestre : : :', callback_data='null')])
+        keyboard.append([InlineKeyboardButton(text='-----     secondo semestre     -----', callback_data='null')])
         for group in second_semester:
             keyboard.append([InlineKeyboardButton(text=group['text'], url=group['url'])])
 
@@ -339,24 +342,27 @@ def main() -> None:
         entry_points=[CommandHandler('start', start_command)],
         states={
             MENU: [
-                CallbackQueryHandler(groups_page, pattern='^' + 'generic' + '$'),
-                CallbackQueryHandler(groups_page, pattern='^' + 'first' + '$'),
-                CallbackQueryHandler(groups_page, pattern='^' + 'second' + '$'),
-                CallbackQueryHandler(groups_page, pattern='^' + 'third' + '$'),
+                CallbackQueryHandler(groups_page, pattern='^' + 'B-generic' + '$'),
+                CallbackQueryHandler(groups_page, pattern='^' + 'B-first' + '$'),
+                CallbackQueryHandler(groups_page, pattern='^' + 'B-second' + '$'),
+                CallbackQueryHandler(groups_page, pattern='^' + 'B-third' + '$'),
                 CallbackQueryHandler(groups_page, pattern='^' + 'about' + '$'),
                 CallbackQueryHandler(groups_page, pattern='^' + 'internship' + '$'),
-                CallbackQueryHandler(groups_page, pattern='^' + 'master' + '$'),
+                CallbackQueryHandler(groups_page, pattern='^' + 'M-generic' + '$'),
+                CallbackQueryHandler(groups_page, pattern='^' + 'M-first' + '$'),
+                CallbackQueryHandler(groups_page, pattern='^' + 'M-second' + '$'),
                 CallbackQueryHandler(misc_page, pattern='^' + 'suggest' + '$'),
                 CallbackQueryHandler(admins_page, pattern='^' + 'admin' + '$'),
-                CallbackQueryHandler(start_over, pattern='^' + 'start_over' + '$'),
                 CallbackQueryHandler(misc_page, pattern='^' + 'null' + '$'),
+                CallbackQueryHandler(start_over, pattern='^(?!.*(B-generic|B-first|B-second|B-third|about|internship'
+                                                         '|M-generic|M.first|M-second|suggest|admin|null)).*$'),
             ],
             ADMIN: [
                 CallbackQueryHandler(admins_utils, pattern='^' + 'clear' + '$'),
                 CallbackQueryHandler(admins_utils, pattern='^' + 'add_group' + '$'),
                 CallbackQueryHandler(admins_utils, pattern='^' + 'remove_group' + '$'),
-                CallbackQueryHandler(start_over, pattern='^' + 'start_over' + '$'),
-
+                CallbackQueryHandler(start_over, pattern='^(?!.*(B-generic|B-first|B-second|B-third|about|internship'
+                                                         '|M-generic|M.first|M-second|suggest|admin|null)).*$'),
             ],
             INPUT: [
                 MessageHandler(Filters.text & ~Filters.command, get_input),
