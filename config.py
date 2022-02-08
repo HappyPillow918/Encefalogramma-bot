@@ -75,7 +75,7 @@ Qui trovi elencati i gruppi del terzo anno per il nostro corso. Per i crediti li
 Il bot è rilasciato dietro licenza MIT e il codice può essere consultato su \
 [GitHub](https://github.com/HappyPillow918/encefalogramma-bot).
 
-_Se riscontri comportamenti anomali, contatta ----- su Telegram._ 
+_Se riscontri comportamenti anomali, contatta @----- su Telegram._ 
     """,
     "suggest": """
 🧠 *Encefalogramma*
@@ -84,7 +84,10 @@ _Se riscontri comportamenti anomali, contatta ----- su Telegram._
 Invia un messaggio qui sotto con il link al gruppo e una breve descrizione dello stesso. Un amministratore \
 lo visualizzerà il prima possibile e aggiungerà il gruppo al bot.
 
-⚠ Sono ammessi esclusivamente gruppi *telegram* con cronologia della chat *visibile* ai nuovi membri.
+⚠ Sono preferiti gruppi *telegram*.
+⚠ Non inviate hyperlink, come [questo](https://example.com/), perchè il bot non riesce \
+a vederli. I link devono essere visibili nel messaggio e non nascosti dietro al testo \
+(es. https://example.com/).
     """,
     "internship": """
 🧠 *Encefalogramma*
@@ -92,13 +95,12 @@ lo visualizzerà il prima possibile e aggiungerà il gruppo al bot.
     
 Nel gruppo telegram del tirocinio il bot crea autonomamente una lista di coloro che stanno cercando un compagno \
 per frequentare il tirocinio ed è possibile utilizzare i seguenti comandi per interagire con essa:
--`/add |crt+time|` - per essere aggiunti alla lista.
--`/remove` - per essere cancellati dalla lista.
--`/show` - per mostrare la lista.
+-- `/add messaggio` - per aggiungere/aggiornare il proprio messaggio nella lista. \
+Sostituire a 'messaggio' qualche informazione sintetica riguardante il numero di crediti, la volontà di svolgere il
+tirocinio part o full time, eventuali crediti ancora non sicuri ecc. 
+-- `/remove` - per cancellare il proprio messaggio dalla lista.
     
-_Due esempi di formato atteso dopo il comando_ `/add:`
-1. *145F* sta per 145 crediti in Full Time.
-2. *132P* sta per 132 crediti in Part Time.
+Per esempio: `/add ho 133 crediti e cerco un compagno per il part time`
     
 Qui sotto trovi il gruppo relativo al tirocinio.
     """,
@@ -272,34 +274,36 @@ LOGS_STRINGS = {
 # Text displayed by running internship commands
 INTERNSHIP_STRINGS = {
     "list": """
-👩‍🚀 *Coppie Tirocinio*
-
-`/add |crt+time|` - per essere aggiunti alla lista.
-`/remove` - per essere cancellati dalla lista.
-`/show` - per mostrare la lista.
+CLICK HERE
+🧰 *Lista tirocinio*
 
 _In cerca di compagno:_
     """,
-    "new": """
-👩‍🚀 *Coppie Tirocinio*
+    "info": """
+    
+-- `/add messaggio` - per aggiungere/aggiornare il proprio messaggio nella  lista. \
+Sostituire a 'messaggio' qualche informazione sintetica riguardante il numero di crediti, la volontà di svolgere il
+tirocinio part o full time (nota: chi deve ancora seguire dei corsi deve obbligatoriamente scegliere il part time), \
+eventuali crediti ancora non sicuri ecc. 
+-- `/remove` - per cancellare il proprio messaggio dalla lista.
 
-_Una nuova lista è stata creata per il tirocinio {period}._
+Se visualizzi @None accanto ad un nome, significa che la persona in questione non ha ancora impostato un username \
+telegram. Per contattarlo, rintraccialo tra i messaggi. 
+    """,
+    "new": """
+_Nuova lista generata correttamente_
     """,
     "add": """
-👩‍🚀 *Coppie Tirocinio*
-
-{name} _sta cercando un compagno ed è stato aggiunto alla lista!_
+{name} _sta cercando un compagno!_
     """,
     "remove": """
-👩‍🚀 *Coppie Tirocinio*
-
-{name} _ha trovato un compagno ed è stato rimosso dalla lista!_
+{name} _ha trovato un compagno!_
     """,
-    "error": """
-👩‍🚀 *Coppie Tirocinio*
-
-_Hai immesso un formato invalido. Ecco due esempi di formato atteso dopo il comando_ `/add:`
-1. *145F* sta per 145 crediti in Full Time
-2. *132P* sta per 132 crediti in Part Time
+    "edit": """
+{name} _ha aggiornato le informazioni inserite!_
+    """,
+    "error_message": """
+_Immetti almeno il tuo numero di crediti dopo il comando /add_\n
+Per esempio: `/add ho 133 crediti e cerco un compagno per il part time`
     """
 }

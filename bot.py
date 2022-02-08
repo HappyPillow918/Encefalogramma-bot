@@ -195,7 +195,7 @@ def get_input(update: Update, context: CallbackContext) -> None:
         else:
             error = True
     if status == 'add_group':
-        entry = utils.check_format(message, status)
+        entry = utils.check_format(message)
         if entry:
             groups.insert(entry)
             message = entry['text']
@@ -235,61 +235,70 @@ def new_intern(update: Update, context: CallbackContext) -> None:
         # New backup file.
         utils.backup(context.bot)
         interns.truncate()
-        if context.args:
-            update.message.reply_text(text=config.INTERNSHIP_STRINGS['new'].format(period=context.args[0]),
-                                      quote=False, parse_mode='Markdown')
-        msg = update.message.reply_text(text=utils.create_list(interns.all(), config.INTERNSHIP_STRINGS['list']),
+        update.message.reply_text(text=config.INTERNSHIP_STRINGS['new'],
+                                  quote=False, parse_mode='Markdown')
+        msg = update.message.reply_text(text=f"\n{utils.create_list(interns.all(), config.INTERNSHIP_STRINGS['list'])}\n"
+                                             f"{config.INTERNSHIP_STRINGS['info']}",
                                         quote=False, parse_mode='Markdown')
-        utils.delete_old_list(msg, context.bot)
+        if db.all():
+            db.update({'id': msg.message_id}, Query().id.exists())
+        else:
+            db.insert({'id': msg.message_id})
 
 
-# /add [crt+time] command adds a new user-associated entry to the list.
+# /add command adds a new user-associated entry to the list.
 def add_intern(update: Update, context: CallbackContext) -> None:
     if update.message.chat.id != config.INTERNSHIP_GROUP_ID:
         return
-    if context.args:
-        entry = utils.check_format(context.args[0], 'add_intern')
+    if len(context.args) >= 1:
+        entry_text = utils.escape_chars(' '.join([str(elem) for elem in context.args]).lower())
+        entry = entry_text[:250]
         user_id = str(update.message.from_user.id)
         intern = Query()
-        if entry and not interns.contains(intern.id == user_id):
-            user_text = f"{utils.escape_chars(update.message.from_user.first_name)} " \
-                        f"(@{utils.escape_chars(update.message.from_user.username)}) - " \
-                        f"{entry['crt']} crediti in {entry['type']} time"
-            interns.insert({'id': user_id, 'text': user_text})
-            update.message.reply_text(text=config.INTERNSHIP_STRINGS['add']
-                                      .format(name=utils.escape_chars(update.message.from_user.first_name)),
-                                      quote=False, parse_mode='Markdown')
-            msg = update.message.reply_text(text=utils.create_list(interns.all(),
-                                                                   config.INTERNSHIP_STRINGS['list']),
-                                            quote=False, parse_mode='Markdown')
-            utils.delete_old_list(msg, context.bot)
+        message = 'add'
+        if interns.contains(intern.id == user_id):
+            message = 'edit'
+            interns.remove(intern.id == user_id)
+            utils.send_list(
+                context.bot,
+                update.message,
+                interns.all(),
+                config.INTERNSHIP_STRINGS['list']
+            )
+        user_text = f"{utils.escape_chars(update.message.from_user.first_name)} " \
+                    f"(@{utils.escape_chars(update.message.from_user.username)})\n{entry}"
+        interns.insert({'id': user_id, 'text': user_text})
+        utils.send_list(
+            context.bot,
+            update.message,
+            interns.all(),
+            config.INTERNSHIP_STRINGS['list']
+        )
+        update.message.reply_text(text=config.INTERNSHIP_STRINGS[message].format(
+            name=utils.escape_chars(update.message.from_user.first_name)),
+                                  quote=False, parse_mode='Markdown', reply_to_message_id=db.all()[0]['id'])
     else:
-        update.message.reply_text(text=config.INTERNSHIP_STRINGS['error'],
+        update.message.reply_text(text=config.INTERNSHIP_STRINGS['error_message'],
                                   parse_mode='Markdown')
 
 
 # /remove command deletes the user-associated entry from the list.
 def remove_intern(update: Update, context: CallbackContext) -> None:
-    if update.message.chat.id == config.INTERNSHIP_GROUP_ID:
-        user_id = str(update.message.from_user.id)
-        intern = Query()
-        if interns.contains(intern.id == user_id):
-            interns.remove(intern.id == user_id)
-            update.message.reply_text(text=config.INTERNSHIP_STRINGS['remove']
-                                      .format(name=utils.escape_chars(update.message.from_user.first_name)),
-                                      quote=False, parse_mode='Markdown')
-            msg = update.message.reply_text(text=utils.create_list(interns.all(),
-                                                                   config.INTERNSHIP_STRINGS['list']),
-                                            quote=False, parse_mode='Markdown')
-            utils.delete_old_list(msg, context.bot)
-
-
-# /show command sends the current list in chat.
-def show_intern(update: Update, context: CallbackContext) -> None:
-    if update.message.chat.id == config.INTERNSHIP_GROUP_ID:
-        msg = update.message.reply_text(text=utils.create_list(interns.all(), config.INTERNSHIP_STRINGS['list']),
-                                        quote=False, parse_mode='Markdown')
-        utils.delete_old_list(msg, context.bot)
+    if update.message.chat.id != config.INTERNSHIP_GROUP_ID:
+        return
+    user_id = str(update.message.from_user.id)
+    intern = Query()
+    if interns.contains(intern.id == user_id):
+        interns.remove(intern.id == user_id)
+        utils.send_list(
+            context.bot,
+            update.message,
+            interns.all(),
+            config.INTERNSHIP_STRINGS['list']
+        )
+        update.message.reply_text(text=config.INTERNSHIP_STRINGS['remove'].format(
+            name=utils.escape_chars(update.message.from_user.first_name)),
+                                  quote=False, parse_mode='Markdown', reply_to_message_id=db.all()[0]['id'])
 
 
 # ------
@@ -381,7 +390,6 @@ def main() -> None:
     dispatcher.add_handler(CommandHandler('new', new_intern))
     dispatcher.add_handler(CommandHandler('add', add_intern))
     dispatcher.add_handler(CommandHandler('remove', remove_intern))
-    dispatcher.add_handler(CommandHandler('show', show_intern))
     # Inline queries
     dispatcher.add_handler(InlineQueryHandler(inlinequery))
 
