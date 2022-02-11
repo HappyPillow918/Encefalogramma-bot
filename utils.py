@@ -50,13 +50,14 @@ def check_admin(user_id, chat_id, bot) -> bool:
 
 # Send interns' list
 def send_list(bot, message, list_interns, list_header) -> None:
+    message_text = f"{create_list(list_interns, list_header)}\n{INTERNSHIP_STRINGS['info']}"
     try:
         bot.editMessageText(chat_id=INTERNSHIP_GROUP_ID,
                             message_id=db.all()[0]['id'],
-                            text=f"{create_list(list_interns, list_header)}\n{INTERNSHIP_STRINGS['info']}",
+                            text=message_text[:4000],
                             parse_mode='Markdown')
     except Exception:
-        msg = message.reply_text(text=f"{create_list(list_interns, list_header)}\n{INTERNSHIP_STRINGS['info']}",
+        msg = message.reply_text(text=message_text[:4000],
                                  quote=False, parse_mode='Markdown')
         db.update({'id': msg.message_id}, Query().id.exists())
 
